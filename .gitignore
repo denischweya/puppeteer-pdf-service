@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor
+.claude/
+.vscode/
+.idea/
+
+# Template folders (development/testing only)
+Judson*/
+template/
+templates/
+
+# Generated/test output files
+*.pdf
+*.png
+*.jpg
+*.jpeg
+template.zip
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local

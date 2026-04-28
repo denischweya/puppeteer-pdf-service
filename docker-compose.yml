@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  puppeteer:
+    build: .
+    container_name: puppeteer-service
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    # Resource limits to prevent runaway memory usage
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ./template:/templates:ro
+    networks:
+      - wordpress-network
+
+  # WordPress service (optional - if you need a full stack)
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress_password
+      WORDPRESS_DB_NAME: wordpress
+      # Puppeteer service URL for WordPress to use
+      PUPPETEER_SERVICE_URL: http://puppeteer:3000
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./wordpress-plugin:/var/www/html/wp-content/plugins/puppeteer-integration
+    depends_on:
+      - db
+      - puppeteer
+    networks:
+      - wordpress-network
+
+  db:
+    image: mysql:8.0
+    container_name: wordpress-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress_password
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - wordpress-network
+
+volumes:
+  wordpress_data:
+  db_data:
+
+networks:
+  wordpress-network:
+    driver: bridge

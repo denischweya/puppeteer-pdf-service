@@ -1,0 +1,14 @@
+{
+  "name": "puppeteer-microservice",
+  "version": "1.0.0",
+  "description": "Puppeteer microservice for PDF generation and screenshots",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "puppeteer": "^22.0.0"
+  }
+}
