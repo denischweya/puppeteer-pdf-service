@@ -1,13 +1,12 @@
-# Puppeteer PDF/Screenshot Microservice
+# Puppeteer PDF Microservice
 
-A high-fidelity PDF and screenshot generation microservice using Puppeteer and Chromium. Optimized for pixel-perfect PDF output that matches browser rendering.
+A high-fidelity PDF generation microservice using Puppeteer and Chromium. Optimized for pixel-perfect PDF output that matches browser rendering.
 
 ## Features
 
 - Generate PDFs from HTML content or URLs
-- Take screenshots from HTML content or URLs
-- Scrape web content
 - High-fidelity rendering with SwiftShader GPU support
+- Proper handling of CSS effects (clip-path, gradients, shadows)
 - Docker support for easy deployment
 - Auto-recovery on browser crashes
 
@@ -65,9 +64,6 @@ A high-fidelity PDF and screenshot generation microservice using Puppeteer and C
 | `/health` | GET | Health check |
 | `/pdf/url` | POST | Generate PDF from URL |
 | `/pdf/html` | POST | Generate PDF from HTML content |
-| `/screenshot/url` | POST | Screenshot from URL |
-| `/screenshot/html` | POST | Screenshot from HTML |
-| `/scrape` | POST | Scrape content from URL |
 
 ## Usage Examples
 
@@ -124,21 +120,6 @@ curl -X POST http://localhost:3000/pdf/html \
 | `deviceScaleFactor` | number | 2 | Device scale for crisp rendering |
 | `waitUntil` | string | "load" | Wait condition (load, domcontentloaded, networkidle0) |
 
-### Take a Screenshot
-
-```bash
-curl -X POST http://localhost:3000/screenshot/url \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://example.com",
-    "options": {
-      "type": "png",
-      "fullPage": true
-    }
-  }' \
-  --output screenshot.png
-```
-
 ## Configuration
 
 ### Environment Variables
@@ -151,23 +132,20 @@ curl -X POST http://localhost:3000/screenshot/url \
 
 The service is configured with optimized Chromium flags for high-fidelity rendering:
 
-- **SwiftShader GPU**: Software-based GPU rendering for consistent CSS effects (clip-path, gradients, shadows)
+- **SwiftShader GPU**: Software-based GPU rendering for consistent CSS effects
 - **sRGB color profile**: Consistent colors across environments
 - **Disabled font subpixel positioning**: Consistent font rendering
 
 ### Resource Limits (Docker)
 
-The Docker Compose configuration limits memory to 2GB. Adjust in `docker-compose.yml` if needed for large documents.
+The Docker Compose configuration limits memory to 2GB. Adjust in `docker-compose.yml` if needed.
 
 ## Troubleshooting
 
 ### Port already in use
 
 ```bash
-# Kill existing process
 lsof -ti:3000 | xargs kill -9
-
-# Restart
 npm start
 ```
 
@@ -176,11 +154,7 @@ npm start
 The service auto-recovers from browser crashes. Check logs for errors:
 
 ```bash
-# Docker
 docker-compose logs puppeteer
-
-# Local
-# Check terminal output
 ```
 
 ## License
